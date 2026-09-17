@@ -8,7 +8,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Objects;
 
 import javax.crypto.SecretKey;
 
@@ -63,11 +62,8 @@ public class AuthTokenService {
         return Jwts.builder()
             .subject(user.getId().toString())
             .claim("email", user.getEmail())
-            .claim("authorities", userRoleRepository.findByUser(user).stream()
-                .map(userRole -> userRole.getRole())
-                .filter(Objects::nonNull)
-                .map(role -> role.getName())
-                .filter(Objects::nonNull)
+            .claim("authorities", userRoleRepository.findRoleNamesByUserId(user.getId()).stream()
+                .filter(role -> role != null && !role.isBlank())
                 .distinct()
                 .toList())
             .issuer(issuer)

@@ -1,7 +1,5 @@
 package com.syndica.api.infra.security;
 
-import java.util.List;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,17 +36,15 @@ public class ConfigUserDetailsService implements UserDetailsService {
     }
 
     private UserDetails toUserDetails(User user) {
-        List<String> authorities = userRoleRepository.findByUser(user).stream()
-            .filter(userRole -> userRole.getRole() != null)
-            .map(userRole -> userRole.getRole().getName())
+        String[] authorities = userRoleRepository.findRoleNamesByUserId(user.getId()).stream()
             .filter(role -> role != null && !role.isBlank())
             .distinct()
-            .toList();
+            .toArray(String[]::new);
 
         return org.springframework.security.core.userdetails.User
             .withUsername(user.getId().toString())
             .password(user.getPassword())
-            .authorities(authorities.toArray(String[]::new))
+            .authorities(authorities)
             .disabled(!user.isActive())
             .build();
     }

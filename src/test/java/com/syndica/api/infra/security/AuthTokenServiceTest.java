@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.syndica.api.domain.models.RefreshToken;
-import com.syndica.api.domain.models.Role;
 import com.syndica.api.domain.models.User;
 import com.syndica.api.domain.repositories.RefreshTokenRepository;
 import com.syndica.api.domain.repositories.UserRoleRepository;
@@ -59,7 +58,7 @@ class AuthTokenServiceTest {
 
     @Test
     void generatesAccessToken() {
-        when(userRoleRepository.findByUser(user)).thenReturn(List.of());
+        when(userRoleRepository.findRoleNamesByUserId(user.getId())).thenReturn(List.of());
 
         String token = authTokenService.generateAccessToken(user);
 
@@ -70,14 +69,8 @@ class AuthTokenServiceTest {
 
     @Test
     void includesDistinctUserRoleNamesInAccessToken() {
-        Role admin = Role.builder().name("admin").build();
-        Role seller = Role.builder().name("seller").build();
-        Role duplicateAdmin = Role.builder().name("admin").build();
-        when(userRoleRepository.findByUser(user)).thenReturn(List.of(
-            com.syndica.api.domain.models.UserRole.builder().user(user).role(admin).build(),
-            com.syndica.api.domain.models.UserRole.builder().user(user).role(seller).build(),
-            com.syndica.api.domain.models.UserRole.builder().user(user).role(duplicateAdmin).build()
-        ));
+        when(userRoleRepository.findRoleNamesByUserId(user.getId()))
+            .thenReturn(List.of("admin", "seller", "admin"));
 
         String token = authTokenService.generateAccessToken(user);
 
@@ -111,7 +104,7 @@ class AuthTokenServiceTest {
 
     @Test
     void rotatesValidRefreshTokenAndRevokesTheOriginal() {
-        when(userRoleRepository.findByUser(user)).thenReturn(List.of());
+        when(userRoleRepository.findRoleNamesByUserId(user.getId())).thenReturn(List.of());
         RefreshToken currentToken = RefreshToken.builder()
             .user(user)
             .tokenHash("current-hash")

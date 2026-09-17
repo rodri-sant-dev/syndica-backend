@@ -16,9 +16,11 @@ import com.syndica.api.services.UserService;
 
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/users")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
     private final UserService userService;
 
