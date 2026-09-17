@@ -8,7 +8,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 import javax.crypto.SecretKey;
@@ -25,6 +24,7 @@ import com.syndica.api.domain.repositories.UserRoleRepository;
 import com.syndica.api.infra.Execptions.UnauthorizedException;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 
 @Service
@@ -57,6 +57,7 @@ public class AuthTokenService {
     }
 
     public String generateAccessToken(User user) {
+        ensureActive(user);
         Instant issuedAt = Instant.now();
 
         return Jwts.builder()
@@ -77,6 +78,7 @@ public class AuthTokenService {
     }
 
     public String createRefreshToken(User user, boolean remember) {
+        ensureActive(user);
         Instant expiresAt = remember ? null : Instant.now().plus(refreshTokenExpiration);
         return createRefreshToken(user, expiresAt);
     }
@@ -91,6 +93,7 @@ public class AuthTokenService {
             || (currentToken.getExpiresAt() != null && !currentToken.getExpiresAt().isAfter(now))) {
             throw new UnauthorizedException("Refresh token is invalid");
         }
+        ensureActive(currentToken.getUser());
 
         boolean remember = currentToken.getExpiresAt() == null;
         String newRefreshToken = createRefreshToken(currentToken.getUser(), remember);
@@ -117,6 +120,21 @@ public class AuthTokenService {
                 refreshToken.setReplaceMotive("LOGOUT");
                 refreshTokenRepository.save(refreshToken);
             });
+    }
+
+    public Claims parseAccessToken(String token) {
+        return Jwts.parser()
+            .verifyWith(signingKey)
+            .requireIssuer(issuer)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+    }
+
+    private void ensureActive(User user) {
+        if (!user.isActive()) {
+            throw new UnauthorizedException("email or password is incorrect");
+        }
     }
 
     private String createRefreshToken(User user, Instant expiresAt) {

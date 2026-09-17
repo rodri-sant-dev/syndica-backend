@@ -1,15 +1,55 @@
 package com.syndica.api.infra.security;
 
+import java.util.List;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.syndica.api.domain.models.User;
+import com.syndica.api.domain.repositories.UserRepository;
+import com.syndica.api.domain.repositories.UserRoleRepository;
+
 @Service
 public class ConfigUserDetailsService implements UserDetailsService {
+    private final UserRepository userRepository;
+    private final UserRoleRepository userRoleRepository;
+
+    public ConfigUserDetailsService(
+        UserRepository userRepository,
+        UserRoleRepository userRoleRepository
+    ) {
+        this.userRepository = userRepository;
+        this.userRoleRepository = userRoleRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        throw new UsernameNotFoundException("Ainda não implementado");
+        User user = userRepository.findByEmail(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return toUserDetails(user);
+    }
+
+    public UserDetails loadUserById(Integer userId) throws UsernameNotFoundException {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return toUserDetails(user);
+    }
+
+    private UserDetails toUserDetails(User user) {
+        List<String> authorities = userRoleRepository.findByUser(user).stream()
+            .filter(userRole -> userRole.getRole() != null)
+            .map(userRole -> userRole.getRole().getName())
+            .filter(role -> role != null && !role.isBlank())
+            .distinct()
+            .toList();
+
+        return org.springframework.security.core.userdetails.User
+            .withUsername(user.getId().toString())
+            .password(user.getPassword())
+            .authorities(authorities.toArray(String[]::new))
+            .disabled(!user.isActive())
+            .build();
     }
 }

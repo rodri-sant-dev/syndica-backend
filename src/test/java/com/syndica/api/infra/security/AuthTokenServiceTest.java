@@ -165,6 +165,34 @@ class AuthTokenServiceTest {
     }
 
     @Test
+    void rejectsTokenGenerationForInactiveUser() {
+        user.setActive(false);
+
+        assertThatThrownBy(() -> authTokenService.generateAccessToken(user))
+            .isInstanceOf(UnauthorizedException.class)
+            .hasMessage("email or password is incorrect");
+        assertThatThrownBy(() -> authTokenService.createRefreshToken(user, false))
+            .isInstanceOf(UnauthorizedException.class)
+            .hasMessage("email or password is incorrect");
+    }
+
+    @Test
+    void rejectsRefreshForInactiveUser() {
+        user.setActive(false);
+        RefreshToken refreshToken = RefreshToken.builder()
+            .user(user)
+            .tokenHash("inactive-hash")
+            .revoked(false)
+            .build();
+        when(refreshTokenRepository.findByTokenHash(anyString()))
+            .thenReturn(java.util.Optional.of(refreshToken));
+
+        assertThatThrownBy(() -> authTokenService.rotateRefreshToken("inactive-token"))
+            .isInstanceOf(UnauthorizedException.class)
+            .hasMessage("email or password is incorrect");
+    }
+
+    @Test
     void revokesRefreshTokenOnLogout() {
         RefreshToken refreshToken = RefreshToken.builder()
             .user(user)

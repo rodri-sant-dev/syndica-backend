@@ -33,4 +33,8 @@ public class User {
 
     @Column(nullable = false, length = 255)
     private String password;
+
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean active = true;
 }

@@ -33,6 +33,9 @@ public class LoginService {
         if (!passwordEncoder.matches(credentials.password(), user.getPassword())) {
             throw new NotFoundException("email or password is incorrect");
         }
+        if (!user.isActive()) {
+            throw new NotFoundException("email or password is incorrect");
+        }
 
         return user;
     }

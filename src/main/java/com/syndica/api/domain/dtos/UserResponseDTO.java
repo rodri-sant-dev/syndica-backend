@@ -6,5 +6,6 @@ import lombok.Builder;
 public record UserResponseDTO(
     Integer id,
     String username,
-    String email
+    String email,
+    boolean active
 ) {}
