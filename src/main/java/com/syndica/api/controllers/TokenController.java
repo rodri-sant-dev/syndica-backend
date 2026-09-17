@@ -29,7 +29,5 @@ public class TokenController {
             loginService.getUserOfCredentials(loginDTO),
             loginDTO.remember()
         );
-    }
-    
-    
+    }    
 }
