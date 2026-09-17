@@ -1,19 +1,20 @@
 package com.syndica.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import com.syndica.api.domain.dtos.UserDTO;
+import com.syndica.api.domain.models.Role;
 import com.syndica.api.domain.repositories.UserRepository;
+import com.syndica.api.domain.repositories.RoleRepository;
+import com.syndica.api.domain.models.User;
+import com.syndica.api.services.RoleService;
 import com.syndica.api.services.UserService;
 
 @SpringBootApplication
 public class SyndicaApiApplication {
-	private static final Logger logger = LoggerFactory.getLogger(SyndicaApiApplication.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(SyndicaApiApplication.class, args);
@@ -22,19 +23,22 @@ public class SyndicaApiApplication {
 	@Bean
 	CommandLineRunner localUserInitializer(
 		UserRepository userRepository,
-		UserService userService
+		UserService userService,
+		RoleRepository roleRepository,
+		RoleService roleService
 	) {
 		return args -> {
+			Role managerRole = roleRepository.findByName("MANAGER")
+				.orElseGet(() -> roleService.create("MANAGER", "condominium manager"));
 			long userCount = userRepository.count();
-			logger.info("Users found at startup: {}", userCount);
-
+			
 			if (userCount == 0) {
-				userService.create(new UserDTO(
+				User user = userService.create(new UserDTO(
 					"local-user",
 					"admin@admin.com",
 					"Admin@Admin1!"
 				));
-				logger.info("Created local development user");
+				roleService.addUserToRole(user.getEmail(), managerRole.getName());
 			}
 		};
 	}

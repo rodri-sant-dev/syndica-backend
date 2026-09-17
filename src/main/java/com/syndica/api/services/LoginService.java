@@ -43,4 +43,12 @@ public class LoginService {
             authTokenService.createRefreshToken(user, remember)
         );
     }
+
+    public TokensDTO refreshTokens(String refreshToken) {
+        return authTokenService.rotateRefreshToken(refreshToken);
+    }
+
+    public void logout(String refreshToken) {
+        authTokenService.revokeRefreshToken(refreshToken);
+    }
 }
