@@ -35,6 +35,11 @@ public class ConfigUserDetailsService implements UserDetailsService {
         return toUserDetails(user);
     }
 
+    public User loadDomainUserById(Integer userId) throws UsernameNotFoundException {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
     private UserDetails toUserDetails(User user) {
         String[] authorities = userRoleRepository.findRoleNamesByUserId(user.getId()).stream()
             .filter(role -> role != null && !role.isBlank())

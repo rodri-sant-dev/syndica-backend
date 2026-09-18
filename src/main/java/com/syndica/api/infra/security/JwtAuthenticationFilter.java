@@ -10,6 +10,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.syndica.api.domain.models.User;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -43,9 +45,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Claims claims = authTokenService.parseAccessToken(token);
                 Integer userId = Integer.valueOf(claims.getSubject());
                 UserDetails userDetails = userDetailsService.loadUserById(userId);
+                User user = userDetailsService.loadDomainUserById(userId);
                 UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                        userDetails,
+                        user,
                         null,
                         userDetails.getAuthorities()
                     );

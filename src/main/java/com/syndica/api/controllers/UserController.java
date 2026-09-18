@@ -15,7 +15,8 @@ import com.syndica.api.mappers.UserMapper;
 import com.syndica.api.services.UserService;
 
 import jakarta.validation.Valid;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
@@ -29,7 +30,10 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserResponseDTO> create(
+        @Valid @RequestBody UserDTO userDTO,
+        @AuthenticationPrincipal User userAuth
+    ) {
         User user = userService.create(userDTO);
         return ResponseEntity.status(201).body(UserMapper.toResponse(user));
     }
@@ -42,9 +46,8 @@ public class UserController {
     @PatchMapping("/{id}/deactivate")
     public UserResponseDTO deactivate(
         @PathVariable Integer id,
-        Authentication authentication
+        @AuthenticationPrincipal User userAuth
     ) {
-        Integer requesterId = Integer.valueOf(authentication.getName());
-        return UserMapper.toResponse(userService.deactivate(id, requesterId));
+        return UserMapper.toResponse(userService.deactivate(id, userAuth.getId()));
     }
 }
