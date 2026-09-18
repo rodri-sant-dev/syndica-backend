@@ -18,6 +18,7 @@ import com.syndica.api.domain.models.RefreshToken;
 import com.syndica.api.domain.models.User;
 import com.syndica.api.domain.repositories.RefreshTokenRepository;
 import com.syndica.api.domain.repositories.UserRepository;
+import com.syndica.api.domain.repositories.UserRoleRepository;
 import com.syndica.api.infra.security.AuthTokenService;
 
 @SpringBootTest
@@ -40,6 +41,9 @@ class SyndicaApiApplicationTests {
 	@Autowired
 	private RefreshTokenRepository refreshTokenRepository;
 
+	@Autowired
+	private UserRoleRepository userRoleRepository;
+
 	@DynamicPropertySource
 	static void configureDatabase(DynamicPropertyRegistry registry) {
 		registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
@@ -51,6 +55,7 @@ class SyndicaApiApplicationTests {
 	@BeforeEach
 	void cleanDatabase() {
 		refreshTokenRepository.deleteAll();
+		userRoleRepository.deleteAll();
 		userRepository.deleteAll();
 	}
 

@@ -19,6 +19,7 @@ import com.syndica.api.domain.models.RefreshToken;
 import com.syndica.api.domain.models.User;
 import com.syndica.api.domain.repositories.RefreshTokenRepository;
 import com.syndica.api.domain.repositories.UserRepository;
+import com.syndica.api.domain.repositories.UserRoleRepository;
 import com.syndica.api.infra.Execptions.ConflictException;
 
 class UserServiceTest {
@@ -31,10 +32,12 @@ class UserServiceTest {
     void setUp() {
         userRepository = mock(UserRepository.class);
         refreshTokenRepository = mock(RefreshTokenRepository.class);
+        UserRoleRepository userRoleRepository = mock(UserRoleRepository.class);
         userService = new UserService(
             userRepository,
             mock(PasswordEncoder.class),
-            refreshTokenRepository
+            refreshTokenRepository,
+            userRoleRepository
         );
         user = User.builder()
             .id(2)

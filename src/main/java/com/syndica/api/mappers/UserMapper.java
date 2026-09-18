@@ -1,6 +1,9 @@
 package com.syndica.api.mappers;
 
+import java.util.List;
+
 import com.syndica.api.domain.dtos.UserDTO;
+import com.syndica.api.domain.dtos.UserMeResponseDTO;
 import com.syndica.api.domain.dtos.UserResponseDTO;
 import com.syndica.api.domain.models.User;
 
@@ -21,6 +24,14 @@ public final class UserMapper {
             .username(user.getUsername())
             .email(user.getEmail())
             .active(user.isActive())
+            .build();
+    }
+
+    public static UserMeResponseDTO toMeResponse(User user, List<String> grupos) {
+        return UserMeResponseDTO.builder()
+            .username(user.getUsername())
+            .email(user.getEmail())
+            .grupos(grupos)
             .build();
     }
 }

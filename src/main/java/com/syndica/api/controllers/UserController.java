@@ -2,6 +2,7 @@ package com.syndica.api.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.syndica.api.domain.dtos.UserDTO;
+import com.syndica.api.domain.dtos.UserMeResponseDTO;
 import com.syndica.api.domain.dtos.UserResponseDTO;
 import com.syndica.api.domain.models.User;
 import com.syndica.api.mappers.UserMapper;
@@ -36,6 +38,14 @@ public class UserController {
     ) {
         User user = userService.create(userDTO);
         return ResponseEntity.status(201).body(UserMapper.toResponse(user));
+    }
+
+    @GetMapping("/me")
+    public UserMeResponseDTO me(@AuthenticationPrincipal User userAuth) {
+        return UserMapper.toMeResponse(
+            userAuth,
+            userService.getGroups(userAuth.getId())
+        );
     }
 
     @PatchMapping("/{id}/activate")

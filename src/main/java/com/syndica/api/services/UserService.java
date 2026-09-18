@@ -1,5 +1,7 @@
 package com.syndica.api.services;
 
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -7,6 +9,7 @@ import com.syndica.api.domain.dtos.UserDTO;
 import com.syndica.api.domain.models.User;
 import com.syndica.api.domain.repositories.RefreshTokenRepository;
 import com.syndica.api.domain.repositories.UserRepository;
+import com.syndica.api.domain.repositories.UserRoleRepository;
 import com.syndica.api.infra.Execptions.ConflictException;
 import com.syndica.api.infra.Execptions.NotFoundException;
 import com.syndica.api.mappers.UserMapper;
@@ -16,15 +19,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRoleRepository userRoleRepository;
 
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
-        RefreshTokenRepository refreshTokenRepository
+        RefreshTokenRepository refreshTokenRepository,
+        UserRoleRepository userRoleRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenRepository = refreshTokenRepository;
+        this.userRoleRepository = userRoleRepository;
     }
 
     public User create(UserDTO userDTO) {
@@ -57,5 +63,9 @@ public class UserService {
     public User getById(Integer userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("User not found"));
+    }
+
+    public List<String> getGroups(Integer userId) {
+        return userRoleRepository.findRoleNamesByUserId(userId);
     }
 }
