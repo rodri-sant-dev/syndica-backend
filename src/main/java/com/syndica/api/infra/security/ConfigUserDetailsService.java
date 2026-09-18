@@ -1,5 +1,7 @@
 package com.syndica.api.infra.security;
 
+import java.util.UUID;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,13 +31,13 @@ public class ConfigUserDetailsService implements UserDetailsService {
         return toUserDetails(user);
     }
 
-    public UserDetails loadUserById(Integer userId) throws UsernameNotFoundException {
+    public UserDetails loadUserById(UUID userId) throws UsernameNotFoundException {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return toUserDetails(user);
     }
 
-    public User loadDomainUserById(Integer userId) throws UsernameNotFoundException {
+    public User loadDomainUserById(UUID userId) throws UsernameNotFoundException {
         return userRepository.findById(userId)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }

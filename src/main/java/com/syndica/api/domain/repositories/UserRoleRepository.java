@@ -2,6 +2,7 @@ package com.syndica.api.domain.repositories;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,7 +22,7 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Integer> {
         join userRole.role role
         where userRole.user.id = :userId
         """)
-    List<String> findRoleNamesByUserId(@Param("userId") Integer userId);
+    List<String> findRoleNamesByUserId(@Param("userId") UUID userId);
 
     boolean existsByUserAndRole(User user, Role role);
 

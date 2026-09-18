@@ -1,6 +1,7 @@
 package com.syndica.api.infra.security;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authorization.substring(7);
             try {
                 Claims claims = authTokenService.parseAccessToken(token);
-                Integer userId = Integer.valueOf(claims.getSubject());
+                UUID userId = UUID.fromString(claims.getSubject());
                 UserDetails userDetails = userDetailsService.loadUserById(userId);
                 User user = userDetailsService.loadDomainUserById(userId);
                 UsernamePasswordAuthenticationToken authentication =

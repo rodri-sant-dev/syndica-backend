@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class UserServiceTest {
             userRoleRepository
         );
         user = User.builder()
-            .id(2)
+            .id(UUID.fromString("00000000-0000-0000-0000-000000000002"))
             .username("user")
             .email("user@example.com")
             .active(true)
@@ -58,7 +59,10 @@ class UserServiceTest {
             .thenReturn(List.of(refreshToken));
         when(userRepository.save(user)).thenReturn(user);
 
-        User result = userService.deactivate(user.getId(), 1);
+        User result = userService.deactivate(
+            user.getId(),
+            UUID.fromString("00000000-0000-0000-0000-000000000001")
+        );
 
         assertThat(result.isActive()).isFalse();
         assertThat(refreshToken.isRevoked()).isTrue();

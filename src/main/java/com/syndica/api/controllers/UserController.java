@@ -1,5 +1,7 @@
 package com.syndica.api.controllers;
 
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,13 +51,13 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/activate")
-    public UserResponseDTO activate(@PathVariable Integer id) {
+    public UserResponseDTO activate(@PathVariable UUID id) {
         return UserMapper.toResponse(userService.activate(id));
     }
 
     @PatchMapping("/{id}/deactivate")
     public UserResponseDTO deactivate(
-        @PathVariable Integer id,
+        @PathVariable UUID id,
         @AuthenticationPrincipal User userAuth
     ) {
         return UserMapper.toResponse(userService.deactivate(id, userAuth.getId()));

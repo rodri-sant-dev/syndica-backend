@@ -1,6 +1,7 @@
 package com.syndica.api.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,13 +39,13 @@ public class UserService {
         return userRepository.save(UserMapper.toEntity(userDTO, encodedPassword));
     }
 
-    public User activate(Integer userId) {
+    public User activate(UUID userId) {
         User user = getById(userId);
         user.setActive(true);
         return userRepository.save(user);
     }
 
-    public User deactivate(Integer userId, Integer requesterId) {
+    public User deactivate(UUID userId, UUID requesterId) {
         if (userId.equals(requesterId)) {
             throw new ConflictException("A manager cannot deactivate their own user");
         }
@@ -60,12 +61,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User getById(Integer userId) {
+    public User getById(UUID userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
-    public List<String> getGroups(Integer userId) {
+    public List<String> getGroups(UUID userId) {
         return userRoleRepository.findRoleNamesByUserId(userId);
     }
 }

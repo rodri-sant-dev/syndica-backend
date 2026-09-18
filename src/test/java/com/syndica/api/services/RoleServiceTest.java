@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ class RoleServiceTest {
         userRoleRepository = org.mockito.Mockito.mock(UserRoleRepository.class);
         roleService = new RoleService(roleRepository, userRepository, userRoleRepository);
         user = User.builder()
-            .id(1)
+            .id(UUID.fromString("00000000-0000-0000-0000-000000000001"))
             .email("user@example.com")
             .username("user")
             .build();

@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.UUID;
 
 import javax.crypto.SecretKey;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +50,7 @@ class AuthTokenServiceTest {
             userRoleRepository
         );
         user = User.builder()
-            .id(1)
+            .id(UUID.fromString("00000000-0000-0000-0000-000000000001"))
             .username("test-user")
             .email("test@example.com")
             .password("encoded-password")
