@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.syndica.api.domain.repositories.RefreshTokenRepository;
 import com.syndica.api.domain.repositories.UserRoleRepository;
+import com.syndica.api.services.AuthTokenService;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

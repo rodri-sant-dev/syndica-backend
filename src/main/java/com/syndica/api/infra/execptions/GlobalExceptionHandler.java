@@ -1,4 +1,4 @@
-package com.syndica.api.infra.Execptions;
+package com.syndica.api.infra.execptions;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

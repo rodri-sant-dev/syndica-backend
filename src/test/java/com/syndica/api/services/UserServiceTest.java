@@ -21,7 +21,7 @@ import com.syndica.api.domain.models.User;
 import com.syndica.api.domain.repositories.RefreshTokenRepository;
 import com.syndica.api.domain.repositories.UserRepository;
 import com.syndica.api.domain.repositories.UserRoleRepository;
-import com.syndica.api.infra.Execptions.ConflictException;
+import com.syndica.api.infra.execptions.ConflictException;
 
 class UserServiceTest {
     private UserRepository userRepository;

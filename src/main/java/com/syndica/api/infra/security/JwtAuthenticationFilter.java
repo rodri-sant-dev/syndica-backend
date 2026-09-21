@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.syndica.api.domain.models.User;
+import com.syndica.api.services.AuthTokenService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

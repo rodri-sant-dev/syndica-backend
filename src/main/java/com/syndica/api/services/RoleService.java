@@ -8,8 +8,8 @@ import com.syndica.api.domain.models.UserRole;
 import com.syndica.api.domain.repositories.RoleRepository;
 import com.syndica.api.domain.repositories.UserRepository;
 import com.syndica.api.domain.repositories.UserRoleRepository;
-import com.syndica.api.infra.Execptions.ConflictException;
-import com.syndica.api.infra.Execptions.NotFoundException;
+import com.syndica.api.infra.execptions.ConflictException;
+import com.syndica.api.infra.execptions.NotFoundException;
 
 @Service
 public class RoleService {

@@ -19,7 +19,7 @@ import com.syndica.api.domain.models.User;
 import com.syndica.api.domain.repositories.RefreshTokenRepository;
 import com.syndica.api.domain.repositories.UserRepository;
 import com.syndica.api.domain.repositories.UserRoleRepository;
-import com.syndica.api.infra.security.AuthTokenService;
+import com.syndica.api.services.AuthTokenService;
 
 @SpringBootTest
 @ActiveProfiles("test")

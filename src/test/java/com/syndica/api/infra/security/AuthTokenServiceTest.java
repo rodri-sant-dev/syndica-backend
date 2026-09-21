@@ -23,7 +23,8 @@ import com.syndica.api.domain.models.RefreshToken;
 import com.syndica.api.domain.models.User;
 import com.syndica.api.domain.repositories.RefreshTokenRepository;
 import com.syndica.api.domain.repositories.UserRoleRepository;
-import com.syndica.api.infra.Execptions.UnauthorizedException;
+import com.syndica.api.infra.execptions.UnauthorizedException;
+import com.syndica.api.services.AuthTokenService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

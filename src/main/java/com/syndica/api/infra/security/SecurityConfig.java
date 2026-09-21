@@ -30,9 +30,9 @@ public class SecurityConfig {
                     "/swagger-ui/**",
                     "/v3/api-docs/**"
                 ).permitAll()
-                .requestMatchers(HttpMethod.POST, "/users").hasAuthority("MANAGER")
-                .requestMatchers(HttpMethod.PATCH, "/users/*/activate").hasAuthority("MANAGER")
-                .requestMatchers(HttpMethod.PATCH, "/users/*/deactivate").hasAuthority("MANAGER")
+                .requestMatchers(HttpMethod.POST, "/users").hasAuthority("SINDICO")
+                .requestMatchers(HttpMethod.PATCH, "/users/*/activate").hasAuthority("SINDICO")
+                .requestMatchers(HttpMethod.PATCH, "/users/*/deactivate").hasAuthority("SINDICO")
                 .anyRequest().authenticated())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .csrf(AbstractHttpConfigurer::disable);

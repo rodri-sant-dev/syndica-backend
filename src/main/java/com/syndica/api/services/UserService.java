@@ -11,8 +11,8 @@ import com.syndica.api.domain.models.User;
 import com.syndica.api.domain.repositories.RefreshTokenRepository;
 import com.syndica.api.domain.repositories.UserRepository;
 import com.syndica.api.domain.repositories.UserRoleRepository;
-import com.syndica.api.infra.Execptions.ConflictException;
-import com.syndica.api.infra.Execptions.NotFoundException;
+import com.syndica.api.infra.execptions.ConflictException;
+import com.syndica.api.infra.execptions.NotFoundException;
 import com.syndica.api.mappers.UserMapper;
 
 @Service

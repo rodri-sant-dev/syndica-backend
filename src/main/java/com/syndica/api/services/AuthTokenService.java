@@ -1,4 +1,4 @@
-package com.syndica.api.infra.security;
+package com.syndica.api.services;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -20,7 +20,7 @@ import com.syndica.api.domain.models.RefreshToken;
 import com.syndica.api.domain.models.User;
 import com.syndica.api.domain.repositories.RefreshTokenRepository;
 import com.syndica.api.domain.repositories.UserRoleRepository;
-import com.syndica.api.infra.Execptions.UnauthorizedException;
+import com.syndica.api.infra.execptions.UnauthorizedException;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Claims;

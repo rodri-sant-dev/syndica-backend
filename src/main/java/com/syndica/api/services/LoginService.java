@@ -7,8 +7,7 @@ import com.syndica.api.domain.dtos.LoginDTO;
 import com.syndica.api.domain.dtos.TokensDTO;
 import com.syndica.api.domain.models.User;
 import com.syndica.api.domain.repositories.UserRepository;
-import com.syndica.api.infra.Execptions.NotFoundException;
-import com.syndica.api.infra.security.AuthTokenService;
+import com.syndica.api.infra.execptions.NotFoundException;
 
 @Service
 public class LoginService {

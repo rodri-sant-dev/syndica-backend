@@ -28,8 +28,8 @@ public class SyndicaApiApplication {
 		RoleService roleService
 	) {
 		return args -> {
-			Role managerRole = roleRepository.findByName("MANAGER")
-				.orElseGet(() -> roleService.create("MANAGER", "condominium manager"));
+			Role managerRole = roleRepository.findByName("SINDICO")
+				.orElseGet(() -> roleService.create("SINDICO", "condominium manager"));
 			long userCount = userRepository.count();
 			
 			if (userCount == 0) {
