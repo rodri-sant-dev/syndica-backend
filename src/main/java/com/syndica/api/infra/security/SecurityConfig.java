@@ -31,6 +31,7 @@ public class SecurityConfig {
                     "/v3/api-docs/**"
                 ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/users").hasAuthority("SINDICO")
+                .requestMatchers(HttpMethod.GET, "/users").hasAuthority("SINDICO")
                 .requestMatchers(HttpMethod.PATCH, "/users/*/activate").hasAuthority("SINDICO")
                 .requestMatchers(HttpMethod.PATCH, "/users/*/deactivate").hasAuthority("SINDICO")
                 .anyRequest().authenticated())

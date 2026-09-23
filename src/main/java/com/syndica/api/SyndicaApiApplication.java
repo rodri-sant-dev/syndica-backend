@@ -4,6 +4,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.syndica.api.domain.dtos.UserDTO;
 import com.syndica.api.domain.models.Role;
@@ -15,6 +17,7 @@ import com.syndica.api.services.UserService;
 
 @SpringBootApplication
 public class SyndicaApiApplication {
+	private static final Logger log = LoggerFactory.getLogger(SyndicaApiApplication.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(SyndicaApiApplication.class, args);
@@ -39,6 +42,9 @@ public class SyndicaApiApplication {
 					"Admin@Admin1!"
 				));
 				roleService.addUserToRole(user.getEmail(), managerRole.getName());
+				log.info("Local administrator initialized userId={}", user.getId());
+			} else {
+				log.info("Local user initialization skipped existingUsers={}", userCount);
 			}
 		};
 	}

@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.syndica.api.domain.dtos.UserDTO;
 import com.syndica.api.domain.models.User;
@@ -17,6 +19,8 @@ import com.syndica.api.mappers.UserMapper;
 
 @Service
 public class UserService {
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -36,13 +40,21 @@ public class UserService {
 
     public User create(UserDTO userDTO) {
         String encodedPassword = passwordEncoder.encode(userDTO.password());
-        return userRepository.save(UserMapper.toEntity(userDTO, encodedPassword));
+        User user = userRepository.save(UserMapper.toEntity(userDTO, encodedPassword));
+        log.info("User created userId={}", user.getId());
+        return user;
+    }
+
+    public List<User> getAll() {
+        return userRepository.findAll();
     }
 
     public User activate(UUID userId) {
         User user = getById(userId);
         user.setActive(true);
-        return userRepository.save(user);
+        User activatedUser = userRepository.save(user);
+        log.info("User activated userId={}", userId);
+        return activatedUser;
     }
 
     public User deactivate(UUID userId, UUID requesterId) {
@@ -58,7 +70,13 @@ public class UserService {
             refreshToken.setReplaceMotive("USER_DEACTIVATED");
         });
         refreshTokenRepository.saveAll(activeTokens);
-        return userRepository.save(user);
+        User deactivatedUser = userRepository.save(user);
+        log.info(
+            "User deactivated userId={} revokedRefreshTokens={}",
+            userId,
+            activeTokens.size()
+        );
+        return deactivatedUser;
     }
 
     public User getById(UUID userId) {

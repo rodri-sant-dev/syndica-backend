@@ -1,6 +1,8 @@
 package com.syndica.api.controllers;
 
 import java.util.UUID;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,6 +42,16 @@ public class UserController {
     ) {
         User user = userService.create(userDTO);
         return ResponseEntity.status(201).body(UserMapper.toResponse(user));
+    }
+
+    @GetMapping
+    public List<UserResponseDTO> all() {
+        return userService.getAll().stream()
+            .map(user -> UserMapper.toResponse(
+                user,
+                userService.getGroups(user.getId())
+            ))
+            .collect(Collectors.toList());
     }
 
     @GetMapping("/me")

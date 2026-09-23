@@ -14,6 +14,8 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.syndica.api.domain.dtos.TokensDTO;
 import com.syndica.api.domain.models.RefreshToken;
@@ -28,6 +30,8 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class AuthTokenService {
+    private static final Logger log = LoggerFactory.getLogger(AuthTokenService.class);
+
     private static final int REFRESH_TOKEN_BYTES = 32;
 
     private final SecretKey signingKey;
@@ -82,11 +86,18 @@ public class AuthTokenService {
     @Transactional
     public TokensDTO rotateRefreshToken(String token) {
         RefreshToken currentToken = refreshTokenRepository.findByTokenHash(hashToken(token))
-            .orElseThrow(() -> new UnauthorizedException("Refresh token is invalid"));
+            .orElseThrow(() -> {
+                log.warn("Refresh token rejected: token not found");
+                return new UnauthorizedException("Refresh token is invalid");
+            });
 
         Instant now = Instant.now();
         if (currentToken.isRevoked()
             || (currentToken.getExpiresAt() != null && !currentToken.getExpiresAt().isAfter(now))) {
+            log.warn(
+                "Refresh token rejected: revokedOrExpired=true userId={}",
+                currentToken.getUser().getId()
+            );
             throw new UnauthorizedException("Refresh token is invalid");
         }
         ensureActive(currentToken.getUser());
@@ -101,6 +112,7 @@ public class AuthTokenService {
         currentToken.setReplacedByToken(replacement);
         refreshTokenRepository.save(currentToken);
 
+        log.info("Refresh token rotated userId={}", currentToken.getUser().getId());
         return new TokensDTO(
             generateAccessToken(currentToken.getUser()),
             newRefreshToken
@@ -115,6 +127,7 @@ public class AuthTokenService {
                 refreshToken.setRevoked(true);
                 refreshToken.setReplaceMotive("LOGOUT");
                 refreshTokenRepository.save(refreshToken);
+                log.info("Refresh token revoked userId={}", refreshToken.getUser().getId());
             });
     }
 

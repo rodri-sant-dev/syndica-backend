@@ -24,6 +24,17 @@ public final class UserMapper {
             .username(user.getUsername())
             .email(user.getEmail())
             .active(user.isActive())
+            .grupos(List.of())
+            .build();
+    }
+
+    public static UserResponseDTO toResponse(User user, List<String> grupos) {
+        return UserResponseDTO.builder()
+            .id(user.getId())
+            .username(user.getUsername())
+            .email(user.getEmail())
+            .active(user.isActive())
+            .grupos(grupos)
             .build();
     }
 

@@ -1,6 +1,7 @@
 package com.syndica.api.domain.dtos;
 
 import java.util.UUID;
+import java.util.List;
 
 import lombok.Builder;
 
@@ -9,5 +10,6 @@ public record UserResponseDTO(
     UUID id,
     String username,
     String email,
-    boolean active
+    boolean active,
+    List<String> grupos
 ) {}
