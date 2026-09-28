@@ -119,7 +119,7 @@ class AuthTokenServiceTest {
             .revoked(false)
             .build();
 
-        when(refreshTokenRepository.findByTokenHash(anyString()))
+        when(refreshTokenRepository.findByTokenHashForUpdate(anyString()))
             .thenReturn(java.util.Optional.of(currentToken))
             .thenReturn(java.util.Optional.of(replacement));
 
@@ -135,7 +135,7 @@ class AuthTokenServiceTest {
 
     @Test
     void rejectsUnknownRefreshToken() {
-        when(refreshTokenRepository.findByTokenHash(anyString()))
+        when(refreshTokenRepository.findByTokenHashForUpdate(anyString()))
             .thenReturn(java.util.Optional.empty());
 
         assertThatThrownBy(() -> authTokenService.rotateRefreshToken("unknown-token"))
@@ -151,12 +151,29 @@ class AuthTokenServiceTest {
             .expiresAt(Instant.now().minusSeconds(1))
             .revoked(false)
             .build();
-        when(refreshTokenRepository.findByTokenHash(anyString()))
+        when(refreshTokenRepository.findByTokenHashForUpdate(anyString()))
             .thenReturn(java.util.Optional.of(expiredToken));
 
         assertThatThrownBy(() -> authTokenService.rotateRefreshToken("expired-token"))
             .isInstanceOf(UnauthorizedException.class)
             .hasMessage("Refresh token is invalid");
+    }
+
+    @Test
+    void rejectsRevokedRefreshToken() {
+        RefreshToken revokedToken = RefreshToken.builder()
+            .user(user)
+            .tokenHash("revoked-hash")
+            .revoked(true)
+            .replaceMotive("ROTATED")
+            .build();
+        when(refreshTokenRepository.findByTokenHashForUpdate(anyString()))
+            .thenReturn(java.util.Optional.of(revokedToken));
+
+        assertThatThrownBy(() -> authTokenService.rotateRefreshToken("revoked-token"))
+            .isInstanceOf(UnauthorizedException.class)
+            .hasMessage("Refresh token is invalid");
+        verify(refreshTokenRepository, org.mockito.Mockito.never()).save(any(RefreshToken.class));
     }
 
     @Test
@@ -179,7 +196,7 @@ class AuthTokenServiceTest {
             .tokenHash("inactive-hash")
             .revoked(false)
             .build();
-        when(refreshTokenRepository.findByTokenHash(anyString()))
+        when(refreshTokenRepository.findByTokenHashForUpdate(anyString()))
             .thenReturn(java.util.Optional.of(refreshToken));
 
         assertThatThrownBy(() -> authTokenService.rotateRefreshToken("inactive-token"))

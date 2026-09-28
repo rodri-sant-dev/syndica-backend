@@ -85,18 +85,26 @@ public class AuthTokenService {
 
     @Transactional
     public TokensDTO rotateRefreshToken(String token) {
-        RefreshToken currentToken = refreshTokenRepository.findByTokenHash(hashToken(token))
+        RefreshToken currentToken = refreshTokenRepository.findByTokenHashForUpdate(hashToken(token))
             .orElseThrow(() -> {
                 log.warn("Refresh token rejected: token not found");
                 return new UnauthorizedException("Refresh token is invalid");
             });
 
         Instant now = Instant.now();
-        if (currentToken.isRevoked()
-            || (currentToken.getExpiresAt() != null && !currentToken.getExpiresAt().isAfter(now))) {
+        if (currentToken.isRevoked()) {
             log.warn(
-                "Refresh token rejected: revokedOrExpired=true userId={}",
-                currentToken.getUser().getId()
+                "Refresh token rejected: revoked=true userId={} replaceMotive={}",
+                currentToken.getUser().getId(),
+                currentToken.getReplaceMotive()
+            );
+            throw new UnauthorizedException("Refresh token is invalid");
+        }
+        if (currentToken.getExpiresAt() != null && !currentToken.getExpiresAt().isAfter(now)) {
+            log.warn(
+                "Refresh token rejected: expired=true userId={} expiresAt={}",
+                currentToken.getUser().getId(),
+                currentToken.getExpiresAt()
             );
             throw new UnauthorizedException("Refresh token is invalid");
         }
